@@ -11,6 +11,9 @@ body {
 .popup {
   max-width: 400px;
 }
+.popup img {
+  width: 100%;
+}
 
 .entry-form label,
 .entry-form input,

@@ -15,12 +15,12 @@ const App = () => {
     longitude: 0,
     zoom: 1,
   });
+  const getEntries = async () => {
+    const logEntries = await ListLogEntries();
+    SetLogEntries(logEntries);
+  };
   useEffect(() => {
-    (async () => {
-      const logEntries = await ListLogEntries();
-      SetLogEntries(logEntries);
-      console.log(logEntries);
-    })();
+    getEntries();
   }, []);
 
   const showAddMarkerPopup = (event) => {
@@ -64,11 +64,10 @@ const App = () => {
                   transform: "translate(-50% , -100%)",
                 }}
                 stroke="white"
-                stroke-width="2"
+                strokeWidth="2"
                 fill="none"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="css-i6dzq1"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               >
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                 <circle cx="12" cy="10" r="3"></circle>
@@ -88,8 +87,9 @@ const App = () => {
               <div className="popup">
                 <h3>{entry.title}</h3>
                 <p>{entry.comments}</p>
+                {entry.image && <img src={entry.image} alt={entry.title} />}
                 <small>
-                  Visited on :{new Date(entry.visitDate).toLocaleDateString()}
+                  Visited on: {new Date(entry.visitDate).toLocaleDateString()}
                 </small>
               </div>
             </Popup>
@@ -108,7 +108,13 @@ const App = () => {
             onClose={() => setAddEntry(null)}
           >
             <div className="popup">
-              <EntryForm />
+              <EntryForm
+                location={addEntry}
+                onClose={() => {
+                  setAddEntry(null);
+                  getEntries();
+                }}
+              />
             </div>
           </Popup>
           <Marker
@@ -126,10 +132,10 @@ const App = () => {
                   transform: "translate(-50% , -100%)",
                 }}
                 stroke="red"
-                stroke-width="2"
+                strokeWidth="2"
                 fill="none"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeLinecap="round"
+                strokeLinejoin="round"
                 class="css-i6dzq1"
               >
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>

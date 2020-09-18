@@ -1,25 +1,47 @@
-import React from "react";
+import React, { useState } from "react";
 import "./App.css";
 import { useForm } from "react-hook-form";
-const EntryForm = () => {
+import { createLogEntry } from "./API.js";
+
+const EntryForm = ({ location, onClose }) => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const { register, handleSubmit } = useForm();
-  const onSubmit = (data) => console.log(data);
+  const onSubmit = async (data) => {
+    try {
+      setLoading(true);
+      data.latitude = location.latitude;
+      data.longitude = location.longitude;
+      const created = await createLogEntry(data);
+      onClose();
+
+      console.log(created);
+    } catch (error) {
+      console.log(error);
+      setError(error.message);
+    }
+
+    Error && setLoading(false);
+  };
 
   return (
-    <form className="entry-form" onsubmit={handleSubmit(onSubmit)}>
+    <form className="entry-form" onSubmit={handleSubmit(onSubmit)}>
+      {error ? <h3>{error}</h3> : null}
       <label>Title</label>
       <input name="title" required ref={register} />
 
-      <label htmlfor="comments">Comments</label>
+      <label htmlFor="comments">Comments</label>
       <textarea name="comments" rows={3} ref={register} />
 
-      <label htmlfor="description">Description</label>
+      <label htmlFor="description">Description</label>
       <textarea name="description" rows={3} ref={register} />
-      <label htmlfor="image">Image</label>
+      <label htmlFor="image">Image</label>
       <input name="image" ref={register} />
-      <label htmlfor="visitDate">Visit Date</label>
-      <input name="visit Date" type="date" required ref={register} />
-      <button>Create a travel log</button>
+      <label htmlFor="visitDate">Visit Date</label>
+      <input name="visitDate" type="date" required ref={register} />
+      <button disabled={loading}>
+        {loading ? "Loading..." : "Create Entry"}
+      </button>
     </form>
   );
 };
